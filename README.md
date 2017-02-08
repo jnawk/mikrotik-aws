@@ -8,6 +8,8 @@ Quick 'n' dirty scripts for sending a notification of one's IPv4 address &amp; I
     * Put the ARN of the SNS in the SNS `params` variable
 * Create a lambda with the content of `updateSg.js`.  (fill out the security group)
     * Subscribe this Lambda to the SNS
+* Create a lambda with the content of `updateR53.js`.  (fill out the hostname, local portion of IPv6 address (this doesn't change), and route53 zone Id)
+    * Subscribe this Lambda to the SNS
 * Create an API gateway resource called `json` with a path parameter value of `{json+}`
     * This will create an ANY method.  Configure this method to proxy to your lambda function above
 * Install the Mikrotik script (`invokeApiGateway.script`) (filling out the variables)

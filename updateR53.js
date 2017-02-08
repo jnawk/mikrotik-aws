@@ -7,6 +7,7 @@ var route53 = new AWS.Route53();
 
 var localHalf = 'localIPv6AddredsPortion';
 var ourZoneId = 'Route53ZoneId';
+var hostname = 'hostname';
 
 exports.handler = (event, context, callback) => {
     const message = event.Records[0].Sns.Message;
@@ -19,7 +20,7 @@ exports.handler = (event, context, callback) => {
           {
             Action: 'UPSERT', 
             ResourceRecordSet: { 
-              Name: 'hostname', 
+              Name: hostname, 
               Type: 'AAAA', 
               ResourceRecords: [
                 {
