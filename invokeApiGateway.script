@@ -1,6 +1,7 @@
 # script needs read,write,policy,test
 
 :local inetInterface "interface"
+:local poolInterface "interface"
 :local un "username"
 :local pw "password"
 :local baseUrl "https://apigwid.execute-api.region.amazonaws.com/stage/"
@@ -10,16 +11,17 @@
 
 :local ipv6cidr
 :local ipv4cidr
+:local ipv6poolCidr
 
 :global oldJson
 
-:set $prefixDetail [:tostr [:pick [/ipv6 dhcp-client get [find interface=$inetInterface]] 9 10]]
-:set $addressDetail [:tostr [:pick [/ip address get [find interface=$inetInterface]] 2 3]]
+:set $prefixDetail [:tostr [/ipv6 dhcp-client get [find interface=$inetInterface] prefix]]
+:set $ipv6poolCidr [:tostr [/ipv6 pool used get [find info=$poolInterface] prefix]]
+:set $ipv4cidr [:tostr [/ip address get [find interface=$inetInterface] address]]
 
-:set $ipv6cidr [:pick $prefixDetail 7 [:find $prefixDetail ","]]
-:set $ipv4cidr [:pick $addressDetail 8 [:len $addressDetail]]
+:set $ipv6cidr [:pick $prefixDetail 0 [:find $prefixDetail ","]]
 
-:set $json ("%7B%22ipv4cidr%22:%22" . $ipv4cidr . "%22,%22ipv6cidr%22:%22" . $ipv6cidr . "%22%7D")
+:set $json ("%7B%22ipv4cidr%22:%22" . $ipv4cidr . "%22,%22ipv6cidr%22:%22" . $ipv6cidr . "%22,%22ipv6poolCidr%22:%22" . $ipv6poolCidr . "%22%7D")
 :if ($json != $oldJson) do={
   :global oldJson $json
   :tool fetch url=($baseUrl . $json) user=$un password=$pw
