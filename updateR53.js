@@ -5,22 +5,18 @@ console.log('Loading function');
 var AWS = require('aws-sdk');
 var route53 = new AWS.Route53();
 
-var localHalf = 'localIPv6AddredsPortion';
-var ourZoneId = 'Route53ZoneId';
-var hostname = 'hostname';
-
 exports.handler = (event, context, callback) => {
     const message = event.Records[0].Sns.Message;
     var data = JSON.parse(message);
-    var ipv6Address = data.ipv6poolCidr.replace('/64', localHalf);
+    var ipv6Address = data.ipv6poolCidr.replace('/64', process.env.LOCAL);
     var params = {
-      HostedZoneId: ourZoneId,
+      HostedZoneId: process.env.ZONE_ID,
       ChangeBatch: { 
         Changes: [ 
           {
             Action: 'UPSERT', 
             ResourceRecordSet: { 
-              Name: hostname, 
+              Name: process.env.HOSTNAME,
               Type: 'AAAA', 
               ResourceRecords: [
                 {
