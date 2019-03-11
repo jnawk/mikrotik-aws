@@ -1,0 +1,32 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Description: 
+  Updates an IPv6 entry in Route53 by combining the prefix (from SNS) with the
+  local part.
+
+Parameters:
+  Hostname:
+    Type: String
+    Description: The hostname to update
+  LocalPart:
+    Type: String
+    Description: The local half of the IPv6 address
+
+Resources:
+  UpdateRoute53:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description: !Sub Updates IPv6 address for ${Hostname}
+      Code:
+        S3Bucket: jnawk-apse2
+        S3Key: mikrotik-lambda.zip
+      Environment:
+        Variables:
+          HOSTNAME: !Ref Hostname
+          ZONE_ID: Z1SL7N0SIVGUZD
+          LOCAL: !Ref LocalPart
+      Handler: updateR53.handler
+      MemorySize: 128
+      Timeout: 3
+      Role: !Sub arn:aws:iam::${AWS::AccountId}:role/lambda_updateRoute53
+      Runtime: nodejs4.3
